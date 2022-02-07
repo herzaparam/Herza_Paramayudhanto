@@ -46,6 +46,7 @@ const config = {
     static: {
       directory: './dist',
     },
+    open: true,
   },
   plugins: [
     new HtmlWebpackPlugin({ template: './src/index.html' }),

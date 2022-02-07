@@ -1,0 +1,14 @@
+.header {
+    height: 100vh;
+    padding: 2em;
+}
+.projectSection {
+    /* border: 1px solid blue; */
+    height: 80vh;
+}
+.gridCard {
+    /* height: 65vh; */
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 10px 5px;
+}

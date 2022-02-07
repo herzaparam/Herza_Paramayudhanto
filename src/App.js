@@ -2,23 +2,25 @@ import React, { useEffect, useState } from 'react';
 import styles from './styles/App.module.css';
 import RepoCard from './components/RepoCard';
 import SearchInput from './components/SearchInput';
+import SweetScroll from 'sweet-scroll';
 
 let page = 1;
 let per_page = 8;
+const userName = 'herzaparam';
+let scrollx = 0;
 function App() {
-  const userName = 'herzaparam';
-
+  console.log('hoho', scrollx);
   const [user, setUser] = useState({});
   const [listRepo, setListRepo] = useState([]);
   console.log('haha', user);
 
+  const scroller = new SweetScroll({
+    easing: 'easeInOutCubic',
+  });
+
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'auto',
-      /* you can also use 'auto' behaviour
-         in place of 'smooth' */
-    });
+    scrollx = 0;
+    scroller.toTop(0);
   };
 
   const handleLoad = () => {
@@ -83,6 +85,7 @@ function App() {
       .then((res) => {
         // console.log('res', res);
         setListRepo(res);
+        scroller.to((scrollx = scrollx + 350));
       })
       .catch((error) => console.log(error));
   };
@@ -109,42 +112,45 @@ function App() {
     fetchUser();
   }, []);
   return (
-    <header className={styles.header}>
-      <h2 className="title-section">
-        {`${user.login}'s` ?? ''} Project Overview{' '}
-        <span className={styles.totalRepo}>
-          {user.public_repos && `(${user.public_repos})`}
-        </span>{' '}
-      </h2>
-      <hr />
-      <div className={styles.projectSection}>
-        <SearchInput handleChange={processChange} />
-        <div className={styles.gridCard}>
-          {listRepo?.map((item) => {
-            return (
-              <RepoCard
-                key={item.id}
-                title={item.name}
-                language={item.language}
-                timeUpdated={item.updated_at}
-                star={item.stargazers_count}
-                fork={item.forks}
-                watcher={item.watchers_count}
-              />
-            );
-          })}
+    <>
+      <header className={styles.header}>
+        <h2 className="title-section">
+          {`${user.login}'s` ?? ''} Project Overview{' '}
+          <span className={styles.totalRepo}>
+            {user.public_repos && `(${user.public_repos})`}
+          </span>{' '}
+        </h2>
+        <hr />
+        <div className={styles.projectSection}>
+          <SearchInput handleChange={processChange} />
+          <div className={styles.gridCard}>
+            {listRepo?.map((item) => {
+              return (
+                <RepoCard
+                  key={item.id}
+                  title={item.name}
+                  language={item.language}
+                  timeUpdated={item.updated_at}
+                  star={item.stargazers_count}
+                  fork={item.forks}
+                  watcher={item.watchers_count}
+                />
+              );
+            })}
+          </div>
+          {listRepo.length > 0 && listRepo.length < user.public_repos ? (
+            <button className={styles.btnLoad} onClick={() => handleLoad()}>
+              Load More {`+${user.public_repos - listRepo.length}`}
+            </button>
+          ) : (
+            <button className={styles.btnLoad} onClick={() => scrollToTop()}>
+              Back To Top
+            </button>
+          )}
         </div>
-        {listRepo.length > 0 && listRepo.length < user.public_repos ? (
-          <button className={styles.btnLoad} onClick={() => handleLoad()}>
-            Load More {`+${user.public_repos - listRepo.length}`}
-          </button>
-        ) : (
-          <button className={styles.btnLoad} onClick={() => scrollToTop()}>
-            Back To Top
-          </button>
-        )}
-      </div>
-    </header>
+      </header>
+      
+    </>
   );
 }
 

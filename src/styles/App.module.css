@@ -34,3 +34,8 @@
   color: white;
   cursor: pointer;
 }
+
+.profileSection {
+    height: 50vh;
+    background-color: black;
+}

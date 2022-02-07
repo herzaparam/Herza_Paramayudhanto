@@ -1,14 +1,36 @@
 .header {
-    height: 100vh;
-    padding: 2em;
+  height: 100vh;
+  padding: 2em;
 }
 .projectSection {
-    /* border: 1px solid blue; */
-    height: 80vh;
+  /* border: 1px solid blue; */
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+.totalRepo {
+    font-size: 20px;
 }
 .gridCard {
-    /* height: 65vh; */
-    display: grid;
-    grid-template-columns: auto auto;
-    gap: 10px 5px;
+  /* height: 65vh; */
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 10px 5px;
+}
+.btnLoad {
+  width: 200px;
+  bottom: 15px;
+  left: 50%;
+  border: none;
+  outline: none;
+  background-color: #f6f8fa;
+  padding: 7px 10px;
+  border-radius: 8px;
+  font-weight: 700;
+  background-color: #a4c9f6;
+  margin: 30px auto 10px;
+}
+.btnLoad:hover {
+  color: white;
+  cursor: pointer;
 }

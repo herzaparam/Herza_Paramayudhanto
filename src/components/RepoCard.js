@@ -7,9 +7,6 @@ function RepoCard({
   title,
   language,
   timeUpdated,
-  star,
-  fork,
-  watcher,
   toggle,
   selectedItem,
 }) {
@@ -25,12 +22,7 @@ function RepoCard({
         </p>
       </div>
       <div className={styles.right}>
-        <h4>
-          Star <span className={styles.val}>{star}</span>, Fork{' '}
-          <span className={styles.val}>{fork}</span>, Watch{' '}
-          <span className={styles.val}>{watcher}</span>
-        </h4>
-        <button onClick={() => toggle(selectedItem)}>Detail</button>
+        <button onClick={() => toggle(title)}>Detail</button>
       </div>
     </div>
   );
@@ -38,10 +30,7 @@ function RepoCard({
 RepoCard.propTypes = {
   title: PropTypes.string.isRequired,
   language: PropTypes.string,
-  timeUpdated: PropTypes.string.isRequired,
-  star: PropTypes.number.isRequired,
-  fork: PropTypes.number.isRequired,
-  watcher: PropTypes.number.isRequired,
+  timeUpdated: PropTypes.string.isRequired
 };
 
 export default RepoCard;

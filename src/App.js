@@ -9,16 +9,12 @@ const customStyles = {
   content: {
     top: '50%',
     left: '50%',
-    width: '80%',
-    height: '90%',
+    width: '60%',
+    height: '70%',
     right: 'auto',
     bottom: 'auto',
     marginRight: '-50%',
     transform: 'translate(-50%, -50%)',
-  },
-  head: {
-    display: 'flex',
-    justifyContent: 'space-between',
   },
 };
 
@@ -33,20 +29,33 @@ function App() {
   const [listRepo, setListRepo] = useState([]);
   let subtitle;
   const [modalIsOpen, setIsOpen] = React.useState(false);
-  const [itemBeingEdited, setItemBeingEdited] = React.useState(null);
-  console.log('hoho', itemBeingEdited);
+  const [itemBeingViewed, setItemBeingViewed] = React.useState(null);
+  console.log('hoho', itemBeingViewed);
+
+  const fetchDetailRepositories = (_repositoriesName) => {
+    const _url = `https://api.github.com/repos/${userName}/${_repositoriesName}`;
+    fetch(_url)
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } else {
+          throw new Error('Something went wrong');
+        }
+      })
+      .then((res) => {
+        // console.log('res', res);
+        setItemBeingViewed(res);
+      })
+      .catch((error) => console.log(error));
+  };
 
   function openModal(_selectedItem) {
-    setItemBeingEdited(_selectedItem);
+    fetchDetailRepositories(_selectedItem);
     setIsOpen(true);
   }
 
-  function afterOpenModal() {
-    subtitle.style.color = '#f00';
-  }
-
   function closeModal() {
-    setItemBeingEdited(null);
+    setItemBeingViewed(null);
     setIsOpen(false);
   }
   console.log('haha', user);
@@ -191,19 +200,54 @@ function App() {
       <div>
         <Modal
           isOpen={modalIsOpen}
-          onAfterOpen={afterOpenModal}
+          // onAfterOpen={afterOpenModal}
           onRequestClose={closeModal}
           style={customStyles}
           contentLabel="Example Modal"
         >
-          <div style={customStyles.head}>
-            <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Hello</h2>
-            <button onClick={closeModal}>close</button>
+          <div className={styles.head}>
+            <h2
+              className="title-section"
+              ref={(_subtitle) => (subtitle = _subtitle)}
+            >
+              {itemBeingViewed?.name ?? ''}
+            </h2>
+            <span
+              className={styles.close}
+              onClick={() => closeModal(!modalIsOpen)}
+            >
+              &times;
+            </span>
           </div>
-          <div>I am a modal</div>
-          <div>
-            <input />
-            <button>the modal</button>
+          <p className={styles.modalVisibility}>
+            {itemBeingViewed?.visibility ?? ''}
+          </p>
+          <h3>{itemBeingViewed?.language ?? ''}</h3>
+          <div className={styles.iconContainer}>
+            <div className={styles.modalIcon}>
+              <p>Fork</p>
+              <p>
+                <span className={styles.val}>
+                  {itemBeingViewed?.forks_count ?? ''}
+                </span>
+              </p>
+            </div>
+            <div className={styles.modalIcon}>
+              <p>Star</p>
+              <p>
+                <span className={styles.val}>
+                  {itemBeingViewed?.forks_count ?? ''}
+                </span>
+              </p>
+            </div>
+            <div className={styles.modalIcon}>
+              <p>Watch</p>
+              <p>
+                <span className={styles.val}>
+                  {itemBeingViewed?.forks_count ?? ''}
+                </span>
+              </p>
+            </div>
           </div>
         </Modal>
       </div>

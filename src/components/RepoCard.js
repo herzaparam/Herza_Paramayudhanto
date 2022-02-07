@@ -3,8 +3,16 @@ import PropTypes from 'prop-types';
 import styles from '../styles/styleComponent.module.css';
 import moment from 'moment';
 
-function RepoCard({ title, language, timeUpdated, star, fork, watcher }) {
-
+function RepoCard({
+  title,
+  language,
+  timeUpdated,
+  star,
+  fork,
+  watcher,
+  toggle,
+  selectedItem,
+}) {
   return (
     <div className={styles.card}>
       <div className={styles.left}>
@@ -22,7 +30,7 @@ function RepoCard({ title, language, timeUpdated, star, fork, watcher }) {
           <span className={styles.val}>{fork}</span>, Watch{' '}
           <span className={styles.val}>{watcher}</span>
         </h4>
-        <button>Detail</button>
+        <button onClick={() => toggle(selectedItem)}>Detail</button>
       </div>
     </div>
   );

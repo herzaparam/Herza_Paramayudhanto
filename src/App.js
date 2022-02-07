@@ -3,15 +3,52 @@ import styles from './styles/App.module.css';
 import RepoCard from './components/RepoCard';
 import SearchInput from './components/SearchInput';
 import SweetScroll from 'sweet-scroll';
+import Modal from 'react-modal';
+
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    width: '80%',
+    height: '90%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+  },
+  head: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+};
+
+Modal.setAppElement('#root');
 
 let page = 1;
 let per_page = 8;
 const userName = 'herzaparam';
 let scrollx = 0;
 function App() {
-  console.log('hoho', scrollx);
   const [user, setUser] = useState({});
   const [listRepo, setListRepo] = useState([]);
+  let subtitle;
+  const [modalIsOpen, setIsOpen] = React.useState(false);
+  const [itemBeingEdited, setItemBeingEdited] = React.useState(null);
+  console.log('hoho', itemBeingEdited);
+
+  function openModal(_selectedItem) {
+    setItemBeingEdited(_selectedItem);
+    setIsOpen(true);
+  }
+
+  function afterOpenModal() {
+    subtitle.style.color = '#f00';
+  }
+
+  function closeModal() {
+    setItemBeingEdited(null);
+    setIsOpen(false);
+  }
   console.log('haha', user);
 
   const scroller = new SweetScroll({
@@ -134,6 +171,8 @@ function App() {
                   star={item.stargazers_count}
                   fork={item.forks}
                   watcher={item.watchers_count}
+                  toggle={openModal}
+                  selectedItem={item}
                 />
               );
             })}
@@ -149,7 +188,25 @@ function App() {
           )}
         </div>
       </header>
-      
+      <div>
+        <Modal
+          isOpen={modalIsOpen}
+          onAfterOpen={afterOpenModal}
+          onRequestClose={closeModal}
+          style={customStyles}
+          contentLabel="Example Modal"
+        >
+          <div style={customStyles.head}>
+            <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Hello</h2>
+            <button onClick={closeModal}>close</button>
+          </div>
+          <div>I am a modal</div>
+          <div>
+            <input />
+            <button>the modal</button>
+          </div>
+        </Modal>
+      </div>
     </>
   );
 }

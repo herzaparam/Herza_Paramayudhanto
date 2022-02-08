@@ -141,7 +141,13 @@ function App() {
       setListUser([]);
     }
   }
+  function saveInputRepo(_query) {
+    per_page = 100;
+    let url = `https://api.github.com/users/${userName}/repos?page=${page}&per_page=${per_page}`;
+    searchList(url, _query);
+  }
   const processChange = debounce((query) => saveInput(query));
+  const handleChange = debounce((query) => saveInputRepo(query));
 
   const filterList = (_list, _query) => {
     const filtered = _list?.filter((item) => {
@@ -183,7 +189,7 @@ function App() {
       .then((res) => {
         // console.log('res', res);
         setListRepo(res);
-        scroller.to((scrollx = scrollx + 350));
+        scroller.to((scrollx = scrollx + 680));
       })
       .catch((error) => console.log(error));
   };
@@ -211,9 +217,11 @@ function App() {
                 <div
                   className={styles.listUserContent}
                   onClick={() => {
+                    setUserName(item.login)
                     fetchUser(item.login);
                     const url = `https://api.github.com/users/${item.login}/repos?page=${page}&per_page=${per_page}`;
                     fetchList(url);
+                    setListUser([])
                   }}
                   key={item.id}
                 >
@@ -235,7 +243,7 @@ function App() {
             </h2>
             <hr />
             <div className={styles.projectSection}>
-              <SearchInput handleChange={processChange} />
+              <SearchInput handleChange={handleChange} />
               <div className={styles.gridCard}>
                 {listRepo?.map((item) => {
                   return (
@@ -254,7 +262,7 @@ function App() {
                 })}
               </div>
               {listRepo.length > 0 && listRepo.length < user.public_repos ? (
-                <button className={styles.btnLoad} onClick={() => handleLoad()}>
+                <button className={styles.btnLoad} onClick={() => handleLoad()} disabled={listRepo.length < 8}>
                   Load More {`+${user.public_repos - listRepo.length}`}
                 </button>
               ) : (

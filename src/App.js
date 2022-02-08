@@ -4,7 +4,7 @@ import RepoCard from './components/RepoCard';
 import SearchInput from './components/SearchInput';
 import SweetScroll from 'sweet-scroll';
 import Modal from 'react-modal';
-import githublogo from './assets/GitHub-Logo (1).png'
+import githublogo from './assets/GitHub-Logo (1).png';
 
 const customStyles = {
   content: {
@@ -27,15 +27,17 @@ Modal.setAppElement('#root');
 
 let page = 1;
 let per_page = 8;
-const userName = 'herzaparam';
+// const userName = 'herzaparam';
 let scrollx = 0;
 function App() {
   const [user, setUser] = useState(null);
+  const [listUser, setListUser] = useState([]);
   const [listRepo, setListRepo] = useState([]);
+  const [userName, setUserName] = useState('');
   let subtitle;
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [itemBeingViewed, setItemBeingViewed] = React.useState(null);
-  console.log('hoho', itemBeingViewed);
+  console.log('hoho', user);
 
   const fetchDetailRepositories = (_repositoriesName) => {
     const _url = `https://api.github.com/repos/${userName}/${_repositoriesName}`;
@@ -76,11 +78,11 @@ function App() {
 
   const handleLoad = () => {
     per_page = per_page + 8;
-    const url = `https://api.github.com/users/${userName}/repos?page=${page}&per_page=${per_page}`;
+    const url = `https://api.github.com/users/${user.login}/repos?page=${page}&per_page=${per_page}`;
     fetchList(url);
   };
 
-  function debounce(func, timeout = 1000) {
+  function debounce(func, timeout = 750) {
     let timer;
     return (...args) => {
       clearTimeout(timer);
@@ -89,10 +91,55 @@ function App() {
       }, timeout);
     };
   }
+
+  const fetchUser = (_name) => {
+    const url = `https://api.github.com/users/${_name}`;
+    fetch(url)
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } else {
+          throw new Error('Something went wrong');
+        }
+      })
+      .then((res) => {
+        console.log('res', res);
+        setUser(res);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const searchUser = (_q) => {
+    let url = `https://api.github.com/search/users`;
+    if (_q !== '') {
+      url += '?q=' + _q;
+    }
+    // console.log('hoho', url);
+    fetch(url)
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } else {
+          throw new Error('Something went wrong');
+        }
+      })
+      .then((res) => {
+        console.log('res', res);
+        setListUser(res.items);
+      })
+      .catch((error) => console.log(error));
+  };
+
   function saveInput(_query) {
-    per_page = 100;
-    let url = `https://api.github.com/users/${userName}/repos?page=${page}&per_page=${per_page}`;
-    searchList(url, _query);
+    // per_page = 100;
+    // let url = `https://api.github.com/users/${userName}/repos?page=${page}&per_page=${per_page}`;
+    // searchList(url, _query);
+    setUserName(_query);
+    if (_query !== '') {
+      searchUser(_query);
+    } else {
+      setListUser([]);
+    }
   }
   const processChange = debounce((query) => saveInput(query));
 
@@ -140,22 +187,6 @@ function App() {
       })
       .catch((error) => console.log(error));
   };
-  const fetchUser = () => {
-    const url = `https://api.github.com/users/${userName}`;
-    fetch(url)
-      .then((response) => {
-        if (response.status === 200) {
-          return response.json();
-        } else {
-          throw new Error('Something went wrong');
-        }
-      })
-      .then((res) => {
-        // console.log('res', res);
-        setUser(res);
-      })
-      .catch((error) => console.log(error));
-  };
 
   useEffect(() => {
     // const url = `https://api.github.com/users/${userName}/repos?page=${page}&per_page=${per_page}`;
@@ -168,7 +199,30 @@ function App() {
         <img src={githublogo} alt="" />
         <h1>Welcome Developers!</h1>
         <p>You can find your list repositories by typing your username</p>
-        <input type="text" placeholder='Type your github username'/>
+        <input
+          type="text"
+          placeholder="Type your github username"
+          onChange={(e) => processChange(e.target.value)}
+        />
+        <div className={styles.listUserContainer}>
+          {listUser.length > 0 &&
+            listUser.map((item) => {
+              return (
+                <div
+                  className={styles.listUserContent}
+                  onClick={() => {
+                    fetchUser(item.login);
+                    const url = `https://api.github.com/users/${item.login}/repos?page=${page}&per_page=${per_page}`;
+                    fetchList(url);
+                  }}
+                  key={item.id}
+                >
+                  <img src={item.avatar_url} alt="" />
+                  <p>{item.login}</p>
+                </div>
+              );
+            })}
+        </div>
       </header>
       {user && (
         <>

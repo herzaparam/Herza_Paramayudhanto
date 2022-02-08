@@ -10,11 +10,15 @@ const customStyles = {
     top: '50%',
     left: '50%',
     width: '60%',
-    height: '70%',
+    height: '50%',
     right: 'auto',
     bottom: 'auto',
     marginRight: '-50%',
     transform: 'translate(-50%, -50%)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 };
 
@@ -58,7 +62,7 @@ function App() {
     setItemBeingViewed(null);
     setIsOpen(false);
   }
-  console.log('haha', user);
+  // console.log('haha', user);
 
   const scroller = new SweetScroll({
     easing: 'easeInOutCubic',
@@ -248,6 +252,28 @@ function App() {
                 </span>
               </p>
             </div>
+          </div>
+          <p className={styles.modalSource}>Source :</p>
+          <div className={styles.groupButton}>
+            {itemBeingViewed?.source ? (
+              <>
+                <img src={itemBeingViewed?.source?.owner?.avatar_url} alt="" />
+                <div>
+                  <h4>{itemBeingViewed?.source?.owner?.login}</h4>
+                  <a href={itemBeingViewed?.source?.owner?.html_url}>
+                    See More
+                  </a>
+                </div>
+              </>
+            ) : (
+              <>
+                <img src={itemBeingViewed?.owner?.avatar_url} alt="" />
+                <div>
+                  <h4>{itemBeingViewed?.owner?.login}</h4>
+                  <a href={itemBeingViewed?.owner?.html_url}>See More</a>
+                </div>
+              </>
+            )}
           </div>
         </Modal>
       </div>

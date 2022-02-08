@@ -4,6 +4,7 @@ import RepoCard from './components/RepoCard';
 import SearchInput from './components/SearchInput';
 import SweetScroll from 'sweet-scroll';
 import Modal from 'react-modal';
+import githublogo from './assets/GitHub-Logo (1).png'
 
 const customStyles = {
   content: {
@@ -29,7 +30,7 @@ let per_page = 8;
 const userName = 'herzaparam';
 let scrollx = 0;
 function App() {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
   const [listRepo, setListRepo] = useState([]);
   let subtitle;
   const [modalIsOpen, setIsOpen] = React.useState(false);
@@ -157,126 +158,142 @@ function App() {
   };
 
   useEffect(() => {
-    const url = `https://api.github.com/users/${userName}/repos?page=${page}&per_page=${per_page}`;
-    fetchList(url);
-    fetchUser();
+    // const url = `https://api.github.com/users/${userName}/repos?page=${page}&per_page=${per_page}`;
+    // fetchList(url);
+    // fetchUser();
   }, []);
   return (
     <>
       <header className={styles.header}>
-        <h2 className="title-section">
-          {`${user.login}'s` ?? ''} Project Overview{' '}
-          <span className={styles.totalRepo}>
-            {user.public_repos && `(${user.public_repos})`}
-          </span>{' '}
-        </h2>
-        <hr />
-        <div className={styles.projectSection}>
-          <SearchInput handleChange={processChange} />
-          <div className={styles.gridCard}>
-            {listRepo?.map((item) => {
-              return (
-                <RepoCard
-                  key={item.id}
-                  title={item.name}
-                  language={item.language}
-                  timeUpdated={item.updated_at}
-                  star={item.stargazers_count}
-                  fork={item.forks}
-                  watcher={item.watchers_count}
-                  toggle={openModal}
-                  selectedItem={item}
-                />
-              );
-            })}
-          </div>
-          {listRepo.length > 0 && listRepo.length < user.public_repos ? (
-            <button className={styles.btnLoad} onClick={() => handleLoad()}>
-              Load More {`+${user.public_repos - listRepo.length}`}
-            </button>
-          ) : (
-            <button className={styles.btnLoad} onClick={() => scrollToTop()}>
-              Back To Top
-            </button>
-          )}
-        </div>
+        <img src={githublogo} alt="" />
+        <h1>Welcome Developers!</h1>
+        <p>You can find your list repositories by typing your username</p>
+        <input type="text" placeholder='Type your github username'/>
       </header>
-      <div>
-        <Modal
-          isOpen={modalIsOpen}
-          // onAfterOpen={afterOpenModal}
-          onRequestClose={closeModal}
-          style={customStyles}
-          contentLabel="Example Modal"
-        >
-          <div className={styles.head}>
-            <h2
-              className="title-section"
-              ref={(_subtitle) => (subtitle = _subtitle)}
-            >
-              {itemBeingViewed?.name ?? ''}
+      {user && (
+        <>
+          <main className={styles.main}>
+            <h2 className="title-section">
+              {`${user.login}'s` ?? ''} Project Overview{' '}
+              <span className={styles.totalRepo}>
+                {user.public_repos && `(${user.public_repos})`}
+              </span>{' '}
             </h2>
-            <span
-              className={styles.close}
-              onClick={() => closeModal(!modalIsOpen)}
+            <hr />
+            <div className={styles.projectSection}>
+              <SearchInput handleChange={processChange} />
+              <div className={styles.gridCard}>
+                {listRepo?.map((item) => {
+                  return (
+                    <RepoCard
+                      key={item.id}
+                      title={item.name}
+                      language={item.language}
+                      timeUpdated={item.updated_at}
+                      star={item.stargazers_count}
+                      fork={item.forks}
+                      watcher={item.watchers_count}
+                      toggle={openModal}
+                      selectedItem={item}
+                    />
+                  );
+                })}
+              </div>
+              {listRepo.length > 0 && listRepo.length < user.public_repos ? (
+                <button className={styles.btnLoad} onClick={() => handleLoad()}>
+                  Load More {`+${user.public_repos - listRepo.length}`}
+                </button>
+              ) : (
+                <button
+                  className={styles.btnLoad}
+                  onClick={() => scrollToTop()}
+                >
+                  Back To Top
+                </button>
+              )}
+            </div>
+          </main>
+          <div>
+            <Modal
+              isOpen={modalIsOpen}
+              // onAfterOpen={afterOpenModal}
+              onRequestClose={closeModal}
+              style={customStyles}
+              contentLabel="Example Modal"
             >
-              &times;
-            </span>
-          </div>
-          <p className={styles.modalVisibility}>
-            {itemBeingViewed?.visibility ?? ''}
-          </p>
-          <h3>{itemBeingViewed?.language ?? ''}</h3>
-          <div className={styles.iconContainer}>
-            <div className={styles.modalIcon}>
-              <p>Fork</p>
-              <p>
-                <span className={styles.val}>
-                  {itemBeingViewed?.forks_count ?? ''}
+              <div className={styles.head}>
+                <h2
+                  className="title-section"
+                  ref={(_subtitle) => (subtitle = _subtitle)}
+                >
+                  {itemBeingViewed?.name ?? ''}
+                </h2>
+                <span
+                  className={styles.close}
+                  onClick={() => closeModal(!modalIsOpen)}
+                >
+                  &times;
                 </span>
+              </div>
+              <p className={styles.modalVisibility}>
+                {itemBeingViewed?.visibility ?? ''}
               </p>
-            </div>
-            <div className={styles.modalIcon}>
-              <p>Star</p>
-              <p>
-                <span className={styles.val}>
-                  {itemBeingViewed?.forks_count ?? ''}
-                </span>
-              </p>
-            </div>
-            <div className={styles.modalIcon}>
-              <p>Watch</p>
-              <p>
-                <span className={styles.val}>
-                  {itemBeingViewed?.forks_count ?? ''}
-                </span>
-              </p>
-            </div>
-          </div>
-          <p className={styles.modalSource}>Source :</p>
-          <div className={styles.groupButton}>
-            {itemBeingViewed?.source ? (
-              <>
-                <img src={itemBeingViewed?.source?.owner?.avatar_url} alt="" />
-                <div>
-                  <h4>{itemBeingViewed?.source?.owner?.login}</h4>
-                  <a href={itemBeingViewed?.source?.owner?.html_url}>
-                    See More
-                  </a>
+              <h3>{itemBeingViewed?.language ?? ''}</h3>
+              <div className={styles.iconContainer}>
+                <div className={styles.modalIcon}>
+                  <p>Fork</p>
+                  <p>
+                    <span className={styles.val}>
+                      {itemBeingViewed?.forks_count ?? ''}
+                    </span>
+                  </p>
                 </div>
-              </>
-            ) : (
-              <>
-                <img src={itemBeingViewed?.owner?.avatar_url} alt="" />
-                <div>
-                  <h4>{itemBeingViewed?.owner?.login}</h4>
-                  <a href={itemBeingViewed?.owner?.html_url}>See More</a>
+                <div className={styles.modalIcon}>
+                  <p>Star</p>
+                  <p>
+                    <span className={styles.val}>
+                      {itemBeingViewed?.forks_count ?? ''}
+                    </span>
+                  </p>
                 </div>
-              </>
-            )}
+                <div className={styles.modalIcon}>
+                  <p>Watch</p>
+                  <p>
+                    <span className={styles.val}>
+                      {itemBeingViewed?.forks_count ?? ''}
+                    </span>
+                  </p>
+                </div>
+              </div>
+              <p className={styles.modalSource}>Source :</p>
+              <div className={styles.groupButton}>
+                {itemBeingViewed?.source ? (
+                  <>
+                    <img
+                      src={itemBeingViewed?.source?.owner?.avatar_url}
+                      alt=""
+                    />
+                    <div>
+                      <h4>{itemBeingViewed?.source?.owner?.login}</h4>
+                      <a href={itemBeingViewed?.source?.owner?.html_url}>
+                        See More
+                      </a>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <img src={itemBeingViewed?.owner?.avatar_url} alt="" />
+                    <div>
+                      <h4>{itemBeingViewed?.owner?.login}</h4>
+                      <a href={itemBeingViewed?.owner?.html_url}>See More</a>
+                    </div>
+                  </>
+                )}
+              </div>
+            </Modal>
           </div>
-        </Modal>
-      </div>
+        </>
+      )}
     </>
   );
 }

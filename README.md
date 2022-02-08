@@ -14,5 +14,15 @@ git clone https://github.com/herzaparam/herza_paramayudhanto.git
 npm install
 ```
 
+## Run the apps
+- start in local
+```sh
+npm start
+```
+- build production
+```sh
+npm run build-prod
+```
+
 ## Contributor
 [Herza Paramayudhanto](https://github.com/herzaparam)

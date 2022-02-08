@@ -1,4 +1,4 @@
-# herza_paramayudhanto
+# Herza_Paramayudhanto
 ## react.js app
 
 an apps which can find github user and see a list of their repository.

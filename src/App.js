@@ -37,7 +37,7 @@ function App() {
   let subtitle;
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [itemBeingViewed, setItemBeingViewed] = React.useState(null);
-  console.log('hoho', user);
+  // console.log('hoho', user);
 
   const fetchDetailRepositories = (_repositoriesName) => {
     const _url = `https://api.github.com/repos/${userName}/${_repositoriesName}`;
@@ -103,7 +103,7 @@ function App() {
         }
       })
       .then((res) => {
-        console.log('res', res);
+        // console.log('res', res);
         setUser(res);
       })
       .catch((error) => console.log(error));
@@ -124,7 +124,7 @@ function App() {
         }
       })
       .then((res) => {
-        console.log('res', res);
+        // console.log('res', res);
         setListUser(res.items);
       })
       .catch((error) => console.log(error));
@@ -172,7 +172,7 @@ function App() {
         }
       })
       .then((res) => {
-        console.log('res', res);
+        // console.log('res', res);
         filterList(res, _query);
       })
       .catch((error) => console.log(error));

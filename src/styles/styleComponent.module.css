@@ -47,24 +47,44 @@
 }
 
 .card .right {
-    align-self: flex-end;
+  align-self: flex-end;
 }
 .right h4 {
-    font-weight: 500;
+  font-weight: 500;
 }
 .right button {
-    float: right;
-    border: none;
-    outline: none;
-    background-color: #f6f8fa;
-    padding: 5px 10px;
-    border-radius: 8px;
-    font-weight: 700;
-    background-color: #a4c9f6;
+  float: right;
+  border: none;
+  outline: none;
+  background-color: #f6f8fa;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-weight: 700;
+  background-color: #a4c9f6;
 }
 .right button:hover {
-    color: white;
-    cursor: pointer;
+  color: white;
+  cursor: pointer;
 }
 
 /* repositories card end here */
+
+@media (max-width: 425px) {
+  .groupInput input {
+    width: auto;
+  }
+}
+@media (max-width: 320px) {
+  .left h3 {
+    font-size: 24px;
+    line-height: 24px;
+  }
+  .left p {
+    font-size: 18px;
+    line-height: 18px;
+  }
+  .tag {
+    font-size: 12px;
+    line-height: 12px;
+  }
+}

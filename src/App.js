@@ -5,6 +5,13 @@ import SearchInput from './components/SearchInput';
 import SweetScroll from 'sweet-scroll';
 import Modal from 'react-modal';
 import githublogo from './assets/GitHub-Logo (1).png';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  getUser,
+  getListUser,
+  removeListUser,
+} from './configs/redux/actions/user';
+import { fetchList } from './configs/redux/actions/repository';
 
 const customStyles = {
   content: {
@@ -30,14 +37,17 @@ let per_page = 8;
 // const userName = 'herzaparam';
 let scrollx = 0;
 function App() {
-  const [user, setUser] = useState(null);
-  const [listUser, setListUser] = useState([]);
-  const [listRepo, setListRepo] = useState([]);
   const [userName, setUserName] = useState('');
   let subtitle;
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [itemBeingViewed, setItemBeingViewed] = React.useState(null);
   // console.log('hoho', user);
+  const { user, listUser } = useSelector((state) => state.userReducer);
+  const { listRepo } = useSelector((state) => state.repositoryReducer);
+  // console.log('redux getrepo app', listRepo);
+  // console.log('redux getlistrepo app', repository);
+
+  const dispatch = useDispatch();
 
   const fetchDetailRepositories = (_repositoriesName) => {
     const _url = `https://api.github.com/repos/${userName}/${_repositoriesName}`;
@@ -92,51 +102,14 @@ function App() {
     };
   }
 
-  const fetchUser = (_name) => {
-    const url = `https://api.github.com/users/${_name}`;
-    fetch(url)
-      .then((response) => {
-        if (response.status === 200) {
-          return response.json();
-        } else {
-          throw new Error('Something went wrong');
-        }
-      })
-      .then((res) => {
-        // console.log('res', res);
-        setUser(res);
-      })
-      .catch((error) => console.log(error));
-  };
-
-  const searchUser = (_q) => {
-    let url = `https://api.github.com/search/users`;
-    if (_q !== '') {
-      url += '?q=' + _q;
-    }
-    // console.log('hoho', url);
-    fetch(url)
-      .then((response) => {
-        if (response.status === 200) {
-          return response.json();
-        } else {
-          throw new Error('Something went wrong');
-        }
-      })
-      .then((res) => {
-        // console.log('res', res);
-        setListUser(res.items);
-      })
-      .catch((error) => console.log(error));
-  };
-
   function saveInput(_query) {
     // per_page = 100;
     // let url = `https://api.github.com/users/${userName}/repos?page=${page}&per_page=${per_page}`;
     // searchList(url, _query);
     setUserName(_query);
     if (_query !== '') {
-      searchUser(_query);
+      // searchUser(_query);
+      dispatch(getListUser(_query));
     } else {
       setListUser([]);
     }
@@ -177,28 +150,7 @@ function App() {
       })
       .catch((error) => console.log(error));
   };
-  const fetchList = (_url) => {
-    fetch(_url)
-      .then((response) => {
-        if (response.status === 200) {
-          return response.json();
-        } else {
-          throw new Error('Something went wrong');
-        }
-      })
-      .then((res) => {
-        // console.log('res', res);
-        setListRepo(res);
-        scroller.to((scrollx = scrollx + 680));
-      })
-      .catch((error) => console.log(error));
-  };
 
-  useEffect(() => {
-    // const url = `https://api.github.com/users/${userName}/repos?page=${page}&per_page=${per_page}`;
-    // fetchList(url);
-    // fetchUser();
-  }, []);
   return (
     <>
       <header className={styles.header}>
@@ -217,11 +169,12 @@ function App() {
                 <div
                   className={styles.listUserContent}
                   onClick={() => {
-                    setUserName(item.login)
-                    fetchUser(item.login);
+                    setUserName(item.login);
+                    // fetchUser(item.login);
+                    dispatch(getUser(item.login));
                     const url = `https://api.github.com/users/${item.login}/repos?page=${page}&per_page=${per_page}`;
-                    fetchList(url);
-                    setListUser([])
+                    dispatch(fetchList(url));
+                    dispatch(removeListUser());
                   }}
                   key={item.id}
                 >
@@ -262,7 +215,11 @@ function App() {
                 })}
               </div>
               {listRepo.length > 0 && listRepo.length < user.public_repos ? (
-                <button className={styles.btnLoad} onClick={() => handleLoad()} disabled={listRepo.length < 8}>
+                <button
+                  className={styles.btnLoad}
+                  onClick={() => handleLoad()}
+                  disabled={listRepo.length < 8}
+                >
                   Load More {`+${user.public_repos - listRepo.length}`}
                 </button>
               ) : (

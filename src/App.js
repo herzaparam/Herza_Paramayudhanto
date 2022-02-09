@@ -44,7 +44,7 @@ function App() {
   // console.log('hoho', user);
   const { user, listUser } = useSelector((state) => state.userReducer);
   const { listRepo } = useSelector((state) => state.repositoryReducer);
-  console.log('redux getrepo app', user);
+  console.log('redux getuser app', user);
   // console.log('redux getlistrepo app', repository);
 
   const dispatch = useDispatch();
@@ -111,7 +111,7 @@ function App() {
       // searchUser(_query);
       dispatch(getListUser(_query));
     } else {
-      setListUser([]);
+      dispatch(removeListUser());
     }
   }
   function saveInputRepo(_query) {
@@ -127,15 +127,16 @@ function App() {
       if (_query === '') {
         per_page = 8;
         const url = `https://api.github.com/users/${userName}/repos?page=${page}&per_page=${per_page}`;
-        return fetchList(url);
+        return dispatch(fetchList(url));
       } else if (item.name.toLowerCase().includes(_query.toLowerCase())) {
         return item;
       }
     });
-    setListRepo(filtered);
+    dispatch({ type: 'FILTERED_REPO', payload: filtered })
   };
 
   const searchList = (_url, _query) => {
+    console.log('hehe', _url, _query);
     fetch(_url)
       .then((response) => {
         if (response.status === 200) {

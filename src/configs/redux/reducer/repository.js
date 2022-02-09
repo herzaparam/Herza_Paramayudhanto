@@ -8,11 +8,10 @@ const repositoryReducer = (state = initialState, action) => {
         return {
             listRepo: action.payload
         };
-        // case 'GET_LIST_USER':
-        // return {
-        //   ...state,
-        //   listUser: action.payload,
-        // };
+        case 'FILTERED_REPO':
+        return {
+          listRepo: action.payload
+        };
       default:
         return state;
     }

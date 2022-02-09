@@ -44,7 +44,7 @@ function App() {
   // console.log('hoho', user);
   const { user, listUser } = useSelector((state) => state.userReducer);
   const { listRepo } = useSelector((state) => state.repositoryReducer);
-  // console.log('redux getrepo app', listRepo);
+  console.log('redux getrepo app', user);
   // console.log('redux getlistrepo app', repository);
 
   const dispatch = useDispatch();
@@ -89,7 +89,7 @@ function App() {
   const handleLoad = () => {
     per_page = per_page + 8;
     const url = `https://api.github.com/users/${user.login}/repos?page=${page}&per_page=${per_page}`;
-    fetchList(url);
+    dispatch(fetchList(url));
   };
 
   function debounce(func, timeout = 750) {
@@ -175,6 +175,7 @@ function App() {
                     const url = `https://api.github.com/users/${item.login}/repos?page=${page}&per_page=${per_page}`;
                     dispatch(fetchList(url));
                     dispatch(removeListUser());
+                    scroller.to((scrollx = scrollx + 680));
                   }}
                   key={item.id}
                 >

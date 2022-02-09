@@ -1,3 +1,8 @@
+import SweetScroll from 'sweet-scroll';
+const scroller = new SweetScroll({
+  easing: 'easeInOutCubic',
+});
+let scrollx = 0;
 export const fetchList = (_url) => (dispatch) => {
     return new Promise((resolve, reject) => {
         fetch(_url)
@@ -11,8 +16,7 @@ export const fetchList = (_url) => (dispatch) => {
         .then((res) => {
           dispatch({ type: 'GET_LIST_REPO', payload: res });
           resolve(res)
-        //   setListRepo(res);
-        //   scroller.to((scrollx = scrollx + 680));
+          scroller.to((scrollx = scrollx + 680));
         })
         .catch((error) => reject(error));
     });

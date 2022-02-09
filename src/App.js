@@ -18,6 +18,7 @@ const customStyles = {
     top: '50%',
     left: '50%',
     minWidth: '30%',
+    maxWidth: '50%',
     height: '50%',
     right: 'auto',
     bottom: 'auto',
@@ -41,10 +42,11 @@ function App() {
   let subtitle;
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [itemBeingViewed, setItemBeingViewed] = React.useState(null);
-  // console.log('hoho', user);
+  const [language, setLanguage] = React.useState({});
+  const [contributor, setContributor] = React.useState([]);
   const { user, listUser } = useSelector((state) => state.userReducer);
   const { listRepo } = useSelector((state) => state.repositoryReducer);
-  console.log('redux getuser app', user);
+  // console.log('redux getuser app', user);
   // console.log('redux getlistrepo app', repository);
 
   const dispatch = useDispatch();
@@ -62,6 +64,8 @@ function App() {
       .then((res) => {
         // console.log('res', res);
         setItemBeingViewed(res);
+        fetchContributorRepo(res.contributors_url);
+        fetchLanguageRepo(res.languages_url);
       })
       .catch((error) => console.log(error));
   };
@@ -73,6 +77,8 @@ function App() {
 
   function closeModal() {
     setItemBeingViewed(null);
+    setLanguage({});
+    setContributor([]);
     setIsOpen(false);
   }
   // console.log('haha', user);
@@ -132,11 +138,10 @@ function App() {
         return item;
       }
     });
-    dispatch({ type: 'FILTERED_REPO', payload: filtered })
+    dispatch({ type: 'FILTERED_REPO', payload: filtered });
   };
 
   const searchList = (_url, _query) => {
-    console.log('hehe', _url, _query);
     fetch(_url)
       .then((response) => {
         if (response.status === 200) {
@@ -150,6 +155,43 @@ function App() {
         filterList(res, _query);
       })
       .catch((error) => console.log(error));
+  };
+
+  const fetchLanguageRepo = (_url) => {
+    fetch(_url)
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } else {
+          throw new Error('Something went wrong');
+        }
+      })
+      .then((res) => {
+        setLanguage(res);
+      })
+      .catch((error) => console.log(error));
+  };
+  const fetchContributorRepo = (_url) => {
+    fetch(_url)
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } else {
+          throw new Error('Something went wrong');
+        }
+      })
+      .then((res) => {
+        setContributor(res);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const renderLanguage = () => {
+    const arr = [];
+    for (const property in language) {
+      arr.push(property);
+    }
+    return arr;
   };
 
   return (
@@ -190,12 +232,15 @@ function App() {
       {user && (
         <>
           <main className={styles.main}>
-            <h2 className="title-section">
-              {`${user.login}'s` ?? ''} Project Overview{' '}
-              <span className={styles.totalRepo}>
-                {user.public_repos && `(${user.public_repos})`}
-              </span>{' '}
-            </h2>
+            <div className={styles.projectUserTitle}>
+              <img src={user?.avatar_url} alt="" />
+              <h2 className="title-section">
+                {`${user.login}'s` ?? ''} Project Overview{' '}
+                <span className={styles.totalRepo}>
+                  {user.public_repos && `(${user.public_repos})`}
+                </span>{' '}
+              </h2>
+            </div>
             <hr />
             <div className={styles.projectSection}>
               <SearchInput handleChange={handleChange} />
@@ -256,10 +301,16 @@ function App() {
                   &times;
                 </span>
               </div>
-              <p className={styles.modalVisibility}>
-                {itemBeingViewed?.visibility ?? ''}
-              </p>
-              <h3>{itemBeingViewed?.language ?? ''}</h3>
+              <p style={{ alignSelf: 'flex-start' }}>language :</p>
+              <div className={styles.groupLanguage}>
+                {renderLanguage()?.map((item, index) => {
+                  return (
+                    <h3 className={styles.modalVisibility} key={index}>
+                      {item}
+                    </h3>
+                  );
+                })}
+              </div>
               <div className={styles.iconContainer}>
                 <div className={styles.modalIcon}>
                   <p>Fork</p>
@@ -286,30 +337,19 @@ function App() {
                   </p>
                 </div>
               </div>
-              <p className={styles.modalSource}>Source :</p>
+              <p className={styles.modalSource}>Contributor :</p>
               <div className={styles.groupButton}>
-                {itemBeingViewed?.source ? (
-                  <>
-                    <img
-                      src={itemBeingViewed?.source?.owner?.avatar_url}
-                      alt=""
-                    />
-                    <div>
-                      <h4>{itemBeingViewed?.source?.owner?.login}</h4>
-                      <a href={itemBeingViewed?.source?.owner?.html_url}>
-                        See More
-                      </a>
+                {contributor?.map((item) => {
+                  return (
+                    <div className={styles.cardContributor} key={item.id}>
+                      <img src={item.avatar_url} alt="" />
+                      <div>
+                        <h4>{item.login}</h4>
+                        <a href={item.html_url}>See More</a>
+                      </div>
                     </div>
-                  </>
-                ) : (
-                  <>
-                    <img src={itemBeingViewed?.owner?.avatar_url} alt="" />
-                    <div>
-                      <h4>{itemBeingViewed?.owner?.login}</h4>
-                      <a href={itemBeingViewed?.owner?.html_url}>See More</a>
-                    </div>
-                  </>
-                )}
+                  );
+                })}
               </div>
             </Modal>
           </div>

@@ -97,11 +97,20 @@
   align-items: center;
   align-self: stretch;
 }
+.groupLanguage {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  align-self: stretch;
+}
 .close {
   color: #aaa;
   font-size: 48px;
   line-height: 48px;
   font-weight: bold;
+  position: relative;
+  top: -30px;
+  right: -10px;
 }
 
 .close:hover,
@@ -117,7 +126,14 @@
   line-height: 14px;
   width: min-content;
   border-radius: 12px;
-  padding: 0 5px 5px;
+  padding: 5px 5px;
+}
+.cardContributor {
+  display: flex;
+  margin-right: 10px;
+  border: 1px solid #aaa;
+  border-radius: 12px;
+  padding: 5px;
 }
 .iconContainer {
   display: flex;
@@ -143,6 +159,8 @@
 .groupButton {
   display: flex;
   align-self: flex-start;
+  overflow: auto;
+  width: 100%;
 }
 .groupButton img {
   width: 50px;
@@ -164,6 +182,18 @@
 .modalSource {
   align-self: flex-start;
 }
+.projectUserTitle {
+  display: flex;
+  align-items: center;
+}
+.projectUserTitle img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
 @media (max-width: 425px) {
   .gridCard {
     grid-template-columns: auto;
